@@ -1,0 +1,29 @@
+{
+  "name": "robots-in-mars",
+  "version": "1.0.0",
+  "description": "Robot movement in a rectangular bounded environment",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j-hernandez93/robots-in-mars.git"
+  },
+  "keywords": [
+    "robots",
+    "mars",
+    "nodejs"
+  ],
+  "author": "j-hernandez93",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/j-hernandez93/robots-in-mars/issues"
+  },
+  "homepage": "https://github.com/j-hernandez93/robots-in-mars#readme"
+}
