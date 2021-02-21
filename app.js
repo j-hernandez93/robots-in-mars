@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const validator = require('./validator');
+const move = require('./move');
 const app = express();
 const port = 3000;
 app.use(bodyParser.urlencoded({extended: true}));
@@ -13,7 +14,8 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  res.send(validator.validate({ instructions: req.body.instructions }));
+  res.send(move.moveRobots(sampleInput)); // TODO replace sample Input by instructions.
+  // res.send(validator.validate({ instructions: req.body.instructions }));
 })
 
 app.post('/saveMap', (req, res) => {
@@ -24,8 +26,8 @@ app.post('/saveMap', (req, res) => {
   res.send(Validator(req.body));
 })
 
-app.get('/finalMap', (req, res) => {
-  // Make movements from txt
+app.get('/getPreviousMaps', (req, res) => {
+  // TODO
   res.send('Delete me when implemented!')
 })
 
