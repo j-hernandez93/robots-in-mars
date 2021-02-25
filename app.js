@@ -6,7 +6,6 @@ const validator = require('./validator');
 const movement = require('./movement');
 const common = require('./common');
 const app = express();
-const port = 3000;
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', (req, res) => {
@@ -34,6 +33,6 @@ app.get('/getPreviousMaps', (req, res) => {
   res.send('Delete me when implemented!')
 })
 
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`)
-})
+app.listen(process.env.PORT || 3000, () => {
+  console.log("App running...")
+});
