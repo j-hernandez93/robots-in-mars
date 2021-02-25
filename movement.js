@@ -16,7 +16,7 @@ function storeNewScents({ mapCoordinates, newScents }) {
       scentsOfDeath: newScents
     })
   } else {
-    ex
+    // TODO
   }
   fs.writeFile("scentsOfDeath.json", JSON.stringify(scentsHistory), function(err) {
     if (err) {
