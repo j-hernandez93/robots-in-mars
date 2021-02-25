@@ -3,27 +3,30 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const validator = require('./validator');
-const move = require('./move');
+const movement = require('./movement');
+const common = require('./common');
 const app = express();
 const port = 3000;
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
-  // res.send('Hello World!') // TODO delete me
 })
 
-app.post('/', (req, res) => {
-  res.send(move.moveRobots(sampleInput)); // TODO replace sample Input by instructions.
-  // res.send(validator.validate({ instructions: req.body.instructions }));
-})
+app.post('/map', (req, res) => {
+  const validatorResponse = validator.validate({instructions: req.body.instructions});
+  if (validatorResponse.statusCode !== 200) {
+    res.status(validatorResponse.statusCode).send(
+      `<p>There was an error with the provided instructions: <br> <i>${validatorResponse.message}</i></p><br><button onclick="window.history.back()">Try again!</button>`) //validatorResponse.message);
+  }
+  const movementResponse = movement.moveRobots({instructions: validatorResponse.body});
+  if (movementResponse.statusCode !== 200) {
+    res.send(
+      `<p>There was an error with the robot movement: <br> <i>${movementResponse.message}</i></p><br><button onclick="window.history.back()">Try again with another input!</button>`);
+  }
+  res.send(
+    `<p>The resulting robots coordinates are: <br> <textarea>${common.buildRobotsOutput(movementResponse.body)}</textarea></p><br><button onclick="window.history.back()">Try again with another input!</button><button onclick="window.history.back()">Visit previous dead robots by map</button>`);
 
-app.post('/saveMap', (req, res) => {
-  // Validate Insert params into file
-  // 1. File position 0 = starting point // TODO implement with Filesystem input.
-  // Check the file is correct! // TODO
-  // 2. Fallback url // TODO
-  res.send(Validator(req.body));
 })
 
 app.get('/getPreviousMaps', (req, res) => {

@@ -1,9 +1,7 @@
-const samples = require('./samples'); // fixme delete
 const Robot = require('./robot');
+const common = require('./common');
 const fs = require('fs');
 let scentsHistory;
-
-moveRobots(samples.sampleInput) // fixme delete
 
 function retrievePreviousScents({ mapCoordinates }) {
   scentsHistory = JSON.parse(fs.readFileSync('scentsOfDeath.json', 'utf8'));
@@ -11,25 +9,27 @@ function retrievePreviousScents({ mapCoordinates }) {
 }
 
 function storeNewScents({ mapCoordinates, newScents }) {
-  // TODO update table/file with dead robots scents.
   const existingMap = scentsHistory.find(item => JSON.stringify(item.marsMap) === JSON.stringify(mapCoordinates))
   if (existingMap === undefined) {
     scentsHistory.push({
       marsMap: mapCoordinates,
       scentsOfDeath: newScents
     })
+  } else {
+    ex
   }
   fs.writeFile("scentsOfDeath.json", JSON.stringify(scentsHistory), function(err) {
     if (err) {
       console.log(`Error writing json to file: ${err}`);
     }
   });
+
 }
 
-function moveRobots(instructions) {
+function moveRobots({instructions}) {
   try {
     let deadRobotsScents = retrievePreviousScents({mapCoordinates: instructions.marsMap});
-    deadRobotsScents = deadRobotsScents.length > 0 ? deadRobotsScents.scentsOfDeath : [];
+    deadRobotsScents = deadRobotsScents.length > 0 ? deadRobotsScents["0"].scentsOfDeath : [];
     const robotsFinalPositions = [];
     for (const robotObj of instructions.robots) {
       const robot = new Robot({marsMap: instructions.marsMap, robot: robotObj, deadScents: deadRobotsScents})
@@ -41,10 +41,9 @@ function moveRobots(instructions) {
       robotsFinalPositions.push(finalPosition);
     }
     storeNewScents({ mapCoordinates: instructions.marsMap, newScents: deadRobotsScents});
-    return robotsFinalPositions;
+    return common.buildApiResponse({code: 200, message: "success", body: robotsFinalPositions});
   } catch (e) {
-    // throwValidatorMessage(`500 internal server error.`) // TODO common error.
-    // TODO.
+    return common.buildApiResponse({code: 500, message: `Error moving robot: ${e}`});
   }
 }
 
