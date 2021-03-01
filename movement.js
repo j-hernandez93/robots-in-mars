@@ -5,48 +5,86 @@ let scentsHistory;
 
 function retrievePreviousScents({ mapCoordinates }) {
   scentsHistory = JSON.parse(fs.readFileSync('scentsOfDeath.json', 'utf8'));
-  return scentsHistory.filter(item => JSON.stringify(item.marsMap) === JSON.stringify(mapCoordinates))
+  return scentsHistory.filter(
+    (item) => JSON.stringify(item.marsMap) === JSON.stringify(mapCoordinates)
+  );
 }
 
 function storeNewScents({ mapCoordinates, newScents }) {
-  const existingMap = scentsHistory.find(item => JSON.stringify(item.marsMap) === JSON.stringify(mapCoordinates))
+  const existingMap = scentsHistory.find(
+    (item) => JSON.stringify(item.marsMap) === JSON.stringify(mapCoordinates)
+  );
   if (existingMap === undefined) {
     scentsHistory.push({
       marsMap: mapCoordinates,
-      scentsOfDeath: newScents
-    })
+      scentsOfDeath: newScents,
+    });
   } else {
-    // TODO
+    scentsHistory.forEach((obj) => {
+      if (JSON.stringify(obj.marsMap) === JSON.stringify(mapCoordinates)) {
+        // Only update if the items are different.
+        if (JSON.stringify(obj.scentsOfDeath) !== JSON.stringify(newScents)) {
+          obj.scentsOfDeath = newScents;
+        }
+      }
+    });
   }
-  fs.writeFile("scentsOfDeath.json", JSON.stringify(scentsHistory), function(err) {
-    if (err) {
-      console.log(`Error writing json to file: ${err}`);
-    }
-  });
-
+  if (newScents.length > 0) {
+    fs.writeFile(
+      'scentsOfDeath.json',
+      JSON.stringify(scentsHistory),
+      function (err) {
+        if (err) {
+          console.log(`Error writing json to file: ${err}`);
+        }
+      }
+    );
+  }
 }
 
-function moveRobots({instructions}) {
+function moveRobots({ instructions }) {
   try {
-    let deadRobotsScents = retrievePreviousScents({mapCoordinates: instructions.marsMap});
-    deadRobotsScents = deadRobotsScents.length > 0 ? deadRobotsScents["0"].scentsOfDeath : [];
+    let deadRobotsScents = retrievePreviousScents({
+      mapCoordinates: instructions.marsMap,
+    });
+    deadRobotsScents =
+      deadRobotsScents.length > 0
+        ? [...deadRobotsScents['0'].scentsOfDeath]
+        : [];
     const robotsFinalPositions = [];
     for (const robotObj of instructions.robots) {
-      const robot = new Robot({marsMap: instructions.marsMap, robot: robotObj, deadScents: deadRobotsScents})
+      const robot = new Robot({
+        marsMap: instructions.marsMap,
+        robot: robotObj,
+        deadScents: [...deadRobotsScents],
+      });
       const { finalPosition, deadScentInstruction } = robot.move();
       if (deadScentInstruction) {
-          deadRobotsScents.push(deadScentInstruction);
+        deadRobotsScents.push(deadScentInstruction);
       }
-      deadRobotsScents = Array.from([...deadRobotsScents.map(JSON.stringify)], JSON.parse);
+      deadRobotsScents = Array.from(
+        [...deadRobotsScents.map(JSON.stringify)],
+        JSON.parse
+      );
       robotsFinalPositions.push(finalPosition);
     }
-    storeNewScents({ mapCoordinates: instructions.marsMap, newScents: deadRobotsScents});
-    return common.buildApiResponse({code: 200, message: "success", body: robotsFinalPositions});
+    storeNewScents({
+      mapCoordinates: instructions.marsMap,
+      newScents: deadRobotsScents,
+    });
+    return common.buildApiResponse({
+      code: 200,
+      message: 'success',
+      body: robotsFinalPositions,
+    });
   } catch (e) {
-    return common.buildApiResponse({code: 500, message: `Error moving robot: ${e}`});
+    return common.buildApiResponse({
+      code: 500,
+      message: `Error moving robot: ${e}`,
+    });
   }
 }
 
 module.exports = {
-  moveRobots
-}
+  moveRobots,
+};
