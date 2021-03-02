@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Robots in Mars</title>
-    <p>TODO write a text</p>
-    <h1>Robots in Mars 2021 edition!</h1>
+
+    <h1>Robots in Mars - 2021 edition!</h1>
+    <p>
+        Welcome to Mars!
+        It is a special planet occupied by robots, so below you can find the rules that apply to them. <br>
+        You can build your own map size where the robots will be in, and specify the set of rules to move them across it <br><br>
+        <i>Input requirements:</i><br>
+        - The first line will set the map coordinates<br>
+        - The following tuple of lines will specify (robot's initial position - set of movements)<br>
+        - Robot's initial orientation can be N, S, E, W (for north, south, east, and west).<br>
+        - The Maximum size of the map is 50x50<br>
+        - Each robot is processed sequentially<br>
+        - If a robot falls off the edge of the grid the word "LOST" should be printed after the position and orientation.<br><br>
+    (*) If no input is specified, the sample set of instructions will be sent!<br>
+    </p>
     <form method="POST" action="/map">
         <textarea placeholder="5 3
 1 1 E

@@ -5,6 +5,8 @@ const validator = require('./validator');
 const movement = require('./movement');
 const common = require('./common');
 const app = express();
+const appPort = process.env.PORT || 3000;
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
@@ -16,24 +18,29 @@ app.post('/map', (req, res) => {
     instructions: req.body.instructions,
   });
   if (validatorResponse.statusCode !== 200) {
-    res
-      .status(validatorResponse.statusCode)
-      .send(
-        `<p>There was an error with the provided instructions: <br> <i>${validatorResponse.message}</i></p><br><button onclick='window.history.back()'>Try again!</button>`
-      );
+    res.status(validatorResponse.statusCode).send(
+      `<p>There was an error with the provided instructions: <br> 
+          <i>${validatorResponse.message}</i></p><br>
+       <button onclick='window.history.back()'>Try again!</button>`
+    );
   }
   const movementResponse = movement.moveRobots({
     instructions: validatorResponse.body,
   });
   if (movementResponse.statusCode !== 200) {
     res.send(
-      `<p>There was an error with the robot movement: <br> <i>${movementResponse.message}</i></p><br><button onclick='window.history.back()'>Modify your input!</button>`
+      `<p>There was an error with the robot movement: <br> 
+          <i>${movementResponse.message}</i></p><br>
+       <button onclick='window.history.back()'>Modify your input!</button>`
     );
   }
   res.send(
-    `<p>The resulting robots coordinates are: <br> <textarea>${common.buildRobotsOutput(
-      movementResponse.body
-    )}</textarea></p><br><button onclick='window.history.back()'>Try again with another input!</button><button onclick='window.location="/getPreviousMaps"'>Visit previous dead robots by map</button>`
+    `<p>The resulting robots coordinates are: <br> 
+      <textarea>${common.buildRobotsOutput(
+        movementResponse.body
+      )}</textarea></p><br>
+     <button onclick='window.history.back()'>Try again with another input!</button>
+     <button onclick='window.location="/getPreviousMaps"'>Visit previous dead robots by map</button>`
   );
 });
 
@@ -44,19 +51,19 @@ app.get('/getPreviousMaps', (req, res) => {
     rows += `<tr> 
               <th>${previousMaps[i].marsMap}</th>
               <th>${previousMaps[i].scentsOfDeath}</th>
-              </tr>`;
+             </tr>`;
   }
   res.send(
     `<p>Previous maps: <br>
-     <table>
-<tr> 
-              <th>Mars Map</th>
-              <th>Dead scents</th>
-              </tr>
-              ${rows} 
-</table>
-    <button onClick='window.location="/"'> Home </button>
-    <form action="/clearHistory" method='post'><button type='submit' formmethod='post'> Clear map History </button></form>
+      <table>
+       <tr> 
+         <th>Mars Map</th>
+         <th>Dead scents</th>
+       </tr>
+       ${rows} 
+      </table>
+     <button onClick='window.location="/"'> Home </button>
+     <form action="/clearHistory" method='post'><button type='submit' formmethod='post'> Clear map History </button></form>
     `
   );
 });
@@ -74,6 +81,6 @@ app.post('/clearHistory', (req, res) => {
   );
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('App running...');
+app.listen(appPort, () => {
+  console.log(`App running at port ${appPort}...`);
 });

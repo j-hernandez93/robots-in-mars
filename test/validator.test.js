@@ -4,7 +4,7 @@ const validator = require('../validator');
 const samples = require('../samples');
 const common = require('../common');
 
-describe('Validate test', () => {
+describe('Validator test', () => {
   it('No input test should return sample test', () => {
     assert.equal(
       validator.validate({ instructions: '' }).body,

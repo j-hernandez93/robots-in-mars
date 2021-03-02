@@ -42,7 +42,7 @@ class Robot {
   }
 
   moveForward() {
-    // FIXME comment!
+    // If the instruction would cause the death of the robot, just omit it.
     if (
       this.deadScents.filter(
         (array) => JSON.stringify(array) === JSON.stringify(this.coordinates)

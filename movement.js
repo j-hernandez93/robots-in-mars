@@ -29,6 +29,7 @@ function storeNewScents({ mapCoordinates, newScents }) {
       }
     });
   }
+  // Only update if there are any dead scents.
   if (newScents.length > 0) {
     fs.writeFile(
       'scentsOfDeath.json',
@@ -51,6 +52,7 @@ function moveRobots({ instructions }) {
       deadRobotsScents.length > 0
         ? [...deadRobotsScents['0'].scentsOfDeath]
         : [];
+
     const robotsFinalPositions = [];
     for (const robotObj of instructions.robots) {
       const robot = new Robot({
@@ -68,6 +70,7 @@ function moveRobots({ instructions }) {
       );
       robotsFinalPositions.push(finalPosition);
     }
+
     storeNewScents({
       mapCoordinates: instructions.marsMap,
       newScents: deadRobotsScents,

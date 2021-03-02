@@ -24,6 +24,7 @@ function buildApiResponse({ code, message, body = undefined }) {
   return { statusCode: code, message, body };
 }
 
+// Formatted as string
 function buildRobotsOutput(results) {
   let strResult = '';
   for (const item of results) {
@@ -36,6 +37,7 @@ function getMapHistory() {
   return JSON.parse(fs.readFileSync('scentsOfDeath.json', 'utf8'));
 }
 
+// Revert to the initial history
 function resetMapHistory() {
   fs.writeFile(
     'scentsOfDeath.json',
